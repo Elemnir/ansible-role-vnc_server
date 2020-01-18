@@ -1,0 +1,7 @@
+#!/bin/bash
+# {{ ansible_managed }}
+
+TOPORT=$(( 5900 + $1 ))
+
+/usr/bin/vncserver :$1 -xstartup $3
+/usr/bin/websockify $2 localhost:${TOPORT} --web=/usr/share/novnc/ 

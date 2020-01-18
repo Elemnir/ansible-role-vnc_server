@@ -1,0 +1,37 @@
+
+- become: True
+  block:
+
+  - name: Install packages
+    package:
+      name: "{{ item }}"
+      state: installed
+    with_items: "{{ vnc_server_packages }}"
+
+  - name: Render the startup script
+    template:
+      src: start_novnc_instance.sh.j2
+      dest: /usr/local/bin/start_novnc_instance.sh
+      mode: 0755
+
+  - name: Render the services
+    template:
+      src: vncserver.service.j2
+      dest: "/etc/systemd/system/vncserver@{{ item.name }}.service"
+    with_items: "{{ vnc_server_instances }}"
+
+  - name: Start the services
+    systemd:
+      name: "vncserver@{{ item.name }}.service"
+      state: started
+      enabled: True
+      daemon-reload: True
+    with_items: "{{ vnc_server_instances }}"
+
+  - name: Open the firewall ports
+    firewalld:
+      port: "{{ item.port }}/tcp"
+      state: enabled
+      immediate: True
+      permanent: True
+    with_items: "{{ vnc_server_instances }}"

@@ -1,0 +1,16 @@
+---
+
+vnc_server_desktop_environment: "@MATE"
+vnc_server_xstartup: "/usr/bin/mate-session"
+
+vnc_server_packages: 
+    - "{{ vnc_server_desktop_environment }}"
+    - tigervnc-server
+    - novnc
+    - python-websockify
+
+vnc_server_instances: []
+#   - name: 
+#     port:
+#     display: ":1"
+#     xstartup: (optional)

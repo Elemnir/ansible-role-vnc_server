@@ -1,0 +1,14 @@
+[Unit]
+Description=VNC Server Service for user %I
+After=syslog.target network.target remote-fs.target
+
+[Service]
+User=%i
+
+ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill :{{ item.display }} > /dev/null 2>&1 || :'
+ExecStart=/usr/local/bin/start_novnc_instance.sh {{ item.display }} {{ item.port }} {{ item.xstartup|default(vnc_server_xstartup) }}
+PIDFile=/var/run/vncserver-%i.pid
+ExecStop=/bin/sh -c '/usr/bin/vncserver -kill :{{ item.display }} > /dev/null 2>&1 || :'
+
+[Install]
+WantedBy=multi-user.target
